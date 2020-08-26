@@ -7,7 +7,7 @@ const resolve = dir => {
 }
 
 module.exports = {
-	publicPath: '/', // 基本路径
+	publicPath: process.env.NODE_ENV === 'production' ? '/' : '', // 基本路径
 	filenameHashing: true, // 生成的静态资源在它们的文件名中包含了 hash 以便更好的控制缓存
 	lintOnSave: true, // eslint-loader 是否在保存的时候检查
 	productionSourceMap: false, // 生产环境是否生成 sourceMap 文件
@@ -15,7 +15,10 @@ module.exports = {
 	configureWebpack: (config) => {
     if (process.env.NODE_ENV === 'production') {
       // 为生产环境修改配置...
-      config.mode = 'production'
+			config.mode = 'production'
+			config.externals = {
+				vue: 'Vue'
+			}
       // 将每个依赖包打包成单独的js文件
       const optimization = {
         runtimeChunk: 'single',
@@ -26,16 +29,17 @@ module.exports = {
           cacheGroups: {
             vendor: {
               test: /[\\/]node_modules[\\/]/,
-              name (module) {
+              name () {
                 // get the name. E.g. node_modules/packageName/not/this/part.js
                 // or node_modules/packageName
-                const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1]
+                // const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1]
                 // npm package names are URL-safe, but some servers don't like @ symbols
-                return `npm.${packageName.replace('@', '')}`
+								// return `chunk.${packageName.replace('@', '')}`
+								return `chunk`
               }
             }
           }
-        },
+				},
 
         // 移除console
         minimizer: [new UglifyPlugin({
@@ -111,7 +115,7 @@ module.exports = {
         // http://lesscss.org/usage/#less-options-strict-units `Global Variables`
         // `primary` is global variables fields name
         globalVars: {
-          primary: '#fff'
+          primary: 'red'
         }
       }
     } // css预设器配置项 详见https://cli.vuejs.org/zh/config/#css-loaderoptions
