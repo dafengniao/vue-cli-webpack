@@ -1,7 +1,9 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}123</h1>
-    <p>
+    <h1>{{ datea }}</h1>
+    <h1>{{ money }}</h1>
+    <p :class="{active: getLength('For a guide and recipes on how to configure', 50)}">
       For a guide and recipes on how to configure / customize this project,<br>
       check out the123123123
       <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
@@ -31,13 +33,27 @@
 </template>
 
 <script>
+import getTextWidth from '@/utils/getTextWidth.js'
+import {formatDate, formatMoney} from '@/utils/tools.js'
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
   },
+  data () {
+    return {
+       datea: '',
+       money: formatMoney(1234567)
+    }
+  },
   created () {
     console.log(11111)
+    this.datea = formatDate(new Date(), 'yyyy/MM/dd hh:mm')
+  },
+  methods: {
+    getLength (str, width){
+      return getTextWidth(str, '14px') > width
+    }
   }
 }
 </script>
